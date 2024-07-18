@@ -54,19 +54,26 @@ int main(int argc , char *argv[]){
 				close(filedesc);
 				return -1;
 			}
+			if(employee != NULL){
+				add_employee(filedesc, employee);
+				printf("Added the employee %s\n",employee);
+				return 0;
+			}
 		}
 	else{
 		if(filepath != NULL){
 			filedesc = open_db_file(filepath);
 			if(filedesc == -1){
-				printf("Bad file descriptor\n");
+				print_usage();
 				close(filedesc);
 				return -1;
 			}
 			if(employee != NULL){
 				add_employee(filedesc, employee);
 				printf("Added the employee %s\n",employee);
+				return 0;
 			}
+
 
 			
 		}

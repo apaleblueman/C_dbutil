@@ -17,4 +17,5 @@ obj/%.o : src/%.c
 clean:
 	rm -f obj/*.o
 	rm -f bin/*
+	rm -f *.txt
 	rm -f *.db

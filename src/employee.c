@@ -8,7 +8,6 @@
 
 int add_employee(int fd,char *employeedetails){
 	write(fd, employeedetails, strlen(employeedetails));
-	
 }
 
 
