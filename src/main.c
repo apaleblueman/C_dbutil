@@ -1,95 +1,107 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdbool.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-#include "file.h"
-#include "employee.h"
+#include<stdio.h>
+#include<unistd.h>
+#include<stdbool.h>
 
-//function prototypes
+#include "file.h"
 
 void print_usage(void);
-int main(int argc , char *argv[]){
-	bool newfile = false;
-	char *filepath = NULL;
-	char *employee = NULL; 
-	int filedesc;
+
+int main(int argc, char *argv[]){
 	if(argc < 3){
+		printf("Not enough arguments for cdb\n");
 		print_usage();
 		return 0;
 	}
-	int opt;
-	while((opt = getopt(argc, argv, "nf:a:d:"))!= -1){
+	int opt, filedesc;
+	bool newfile, addemployee, delemployee;
+	char *filepath = NULL;
+	char *employeeToAdd = NULL;
+	char *employeeToDel = NULL;
+	while((opt=getopt(argc, argv, "na:d:f:"))!=-1){
 		switch(opt){
 			case 'n':
-				//printf("A newfile should be created\n");
-				newfile = true;		
-				break;
-			case 'a':	
-				printf("A new employee %s should be added\n", optarg);
-				employee = optarg;		
-				break;
-			case 'd':
-				printf("employee %s should be deleted\n", optarg);
+				newfile = true;
 				break;
 			case 'f':
-				//printf("%s should be filepath\n", optarg);
-				filepath = optarg;
+				filepath= optarg;
+				break;
+			case 'a':
+				addemployee = true;
+				employeeToAdd = optarg;
+				break;
+			case 'd':
+				delemployee = true;
+				employeeToDel = optarg;
 				break;
 			case '?':
-				printf("Unknow option!\n");
+				printf("Unknown Option\n");
+				print_usage();
 				break;
 			default:
-				printf("Something went wrong\n");
-				return -1;
+				printf("Something went wrong!\n");
+				return -1;				
 		}
-	
 	}
-
-	if(newfile){
-			filedesc = create_db_file(filepath);
-			if(filedesc == -1){
-				printf("File could not be created\n");
-				close(filedesc);
-				return -1;
-			}
-			if(employee != NULL){
-				add_employee(filedesc, employee);
-				printf("Added the employee %s\n",employee);
-				return 0;
-			}
-		}
-	else{
-		if(filepath != NULL){
-			filedesc = open_db_file(filepath);
-			if(filedesc == -1){
-				print_usage();
-				close(filedesc);
-				return -1;
-			}
-			if(employee != NULL){
-				add_employee(filedesc, employee);
-				printf("Added the employee %s\n",employee);
-				return 0;
-			}
-
-
+	if(newfile && filepath!=NULL){
+		//create a newdbfile
+		if((filedesc = create_db(filepath))!= -1){
+			printf("Created a new empty dbfile\n");
+			if(addemployee){
+				//add new employee in the dbfile
+				//add_employee(emp_details);
+				printf("added a newemployee\n");
 			
+			}
+			else if(delemployee){
+				//del_employee(emp_details);
+				printf("No employee to delete\n");
+				return -1;
+			}
+		}
+		else{
+			close(filedesc);
+			return -1;
+		}
+		
+		
+	}
+	else{
+		filedesc = open_db(filepath);
+		if(filepath != NULL){
+			if(addemployee){
+				//add new employee to existing db file
+				printf("Created a new employee in previousdbfile\n");
+				
+			}
+			else if(delemployee){
+				//delete employee from dbfile
+				printf("deleted an employee in previousdbfile\n");
+			
+				
+			}
+			else{
+				//view the dbfile
+				
+				printf("Previewd the requested dbfile\n");
+			
+			}
+		}
+		else{
+			print_usage();
+			return -1;
 		}
 	}
-	//printf("%d\n%s\n", newfile, filepath);
-	
+
+	printf("filepath:%s\nnewfile=%d\nemployeetoadd=%s\nemployeetodel=%s\n", filepath,newfile, employeeToAdd,employeeToDel);
+
 }
 
 
 
 void print_usage(void){
-	printf("Usage: cdb -n -f <filepath> -ad <employeename> \n");
-
-	printf("\t -n create a new database file\n");
+	printf("Usage: cdb -nf <filepath> -ad <employeedetails>\n");
+	printf("\t -n make new database file\n");
 	printf("\t -f (requiered) filepath to database file\n");
-	printf("\t -a create a new employee structure\n");
-	printf("\t -d delete an existing employee structure\n");
-}
-
+	printf("\t -a add employee to database file\n");
+	printf("\t -d delete employee from database file\n");
+};
