@@ -13,7 +13,7 @@ int create_db(char *filepath){
 		close(fd);
 		return -1;
 	}
-	fd = open(filepath, O_CREAT, S_IRWXU);
+	fd = open(filepath, O_CREAT|O_RDWR, S_IRWXU);
 	if(fd == -1){
 		perror("open");
 		close(fd);
@@ -33,3 +33,6 @@ int open_db(char *filepath){
 	return fd;
 };
 
+char read_db(int fd, char *mybuffer){
+	read(fd, mybuffer, sizeof(mybuffer));
+};

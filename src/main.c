@@ -1,8 +1,12 @@
 #include<stdio.h>
 #include<unistd.h>
 #include<stdbool.h>
+#include<string.h>
+#include<stdlib.h>
 
 #include "file.h"
+#include "employee.h"
+
 
 void print_usage(void);
 
@@ -44,13 +48,14 @@ int main(int argc, char *argv[]){
 	}
 	if(newfile && filepath!=NULL){
 		//create a newdbfile
-		if((filedesc = create_db(filepath))!= -1){
+		printf("%d\n",filedesc);
+		filedesc = create_db(filepath);
+		if(filedesc!= -1){
 			printf("Created a new empty dbfile\n");
 			if(addemployee){
 				//add new employee in the dbfile
-				//add_employee(emp_details);
-				printf("added a newemployee\n");
-			
+				add_employee(filedesc, employeeToAdd);
+				printf("added a new employee %s\n", employeeToAdd);
 			}
 			else if(delemployee){
 				//del_employee(emp_details);
@@ -70,20 +75,20 @@ int main(int argc, char *argv[]){
 		if(filepath != NULL){
 			if(addemployee){
 				//add new employee to existing db file
+				add_employee(filedesc, employeeToAdd);
 				printf("Created a new employee in previousdbfile\n");
 				
 			}
 			else if(delemployee){
 				//delete employee from dbfile
 				printf("deleted an employee in previousdbfile\n");
-			
 				
 			}
 			else{
 				//view the dbfile
-				
-				printf("Previewd the requested dbfile\n");
-			
+				char *dataread = malloc(sizeof(char)*1000);
+				read_db(filedesc, dataread);
+				printf("\n%s\n",dataread);
 			}
 		}
 		else{
@@ -95,7 +100,6 @@ int main(int argc, char *argv[]){
 	printf("filepath:%s\nnewfile=%d\nemployeetoadd=%s\nemployeetodel=%s\n", filepath,newfile, employeeToAdd,employeeToDel);
 
 }
-
 
 
 void print_usage(void){
